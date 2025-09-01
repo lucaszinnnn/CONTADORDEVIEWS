@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"/><title>Overlay YouTube</title></head>
+<body style="margin:0;background:transparent">
+<div id="n" style="color:#fff;font-size:64px;font-weight:800;font-family:sans-serif;text-shadow:0 2px 4px rgba(0,0,0,.5)">0</div>
+<script>
+  async function fetchJSON(url){const r=await fetch(url);return await r.json();}
+  function getParam(n,d){const u=new URL(window.location.href);return u.searchParams.get(n)||d;}
+  function extractId(url){try{const u=new URL(url);if(u.hostname.endsWith('youtu.be'))return u.pathname.slice(1);return u.searchParams.get('v');}catch{return null;}}
+  async function tick(){
+    try{
+      const cfg=await fetchJSON('config.json');
+      const vid=extractId(getParam('live',''));
+      if(!vid)return;
+      const url=cfg.videosTemplate.replace('{id}',vid).replace('{key}',cfg.apiKey);
+      const j=await fetchJSON(url);
+      const v=j.items?.[0]?.liveStreamingDetails?.concurrentViewers;
+      if(v)document.getElementById('n').textContent=new Intl.NumberFormat('pt-BR').format(v);
+    }catch(e){}
+  }
+  tick();setInterval(tick,5000);
+</script>
+</body></html>

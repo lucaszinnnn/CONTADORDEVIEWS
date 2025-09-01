@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Gerar link do OBS</title>
+</head>
+<body style="font-family:sans-serif;background:#111;color:#fff;padding:20px">
+  <h1>Gerador de Link para OBS</h1>
+  <p>Cole o link da live do YouTube abaixo:</p>
+  <input id="live" type="url" placeholder="https://www.youtube.com/watch?v=VIDEO_ID" style="width:80%;padding:10px"/>
+  <button id="go" style="padding:10px">Gerar</button>
+  <p id="out"></p>
+<script>
+  function build(live){
+    const base = new URL(window.location.href);
+    base.pathname = base.pathname.replace(/index\.html?$/i, 'obs.html');
+    base.search = '';
+    const u = new URL(base.href);
+    u.searchParams.set('live', live);
+    return u.toString();
+  }
+  document.getElementById('go').addEventListener('click', ()=>{
+    const live=document.getElementById('live').value.trim();
+    if(!live){alert('Cole o link da live');return;}
+    const link=build(live);
+    document.getElementById('out').innerHTML='<a href="'+link+'" target="_blank">'+link+'</a>';
+    navigator.clipboard.writeText(link).catch(()=>{});
+  });
+</script>
+</body>
+</html>
